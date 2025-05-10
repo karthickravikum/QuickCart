@@ -4,8 +4,6 @@ import connectDB from '@/config/db';
 import Address from '@/models/Address';
 
 
-
-
 export async function GET(request) {
     try {
         const { userId } = getAuth(request);

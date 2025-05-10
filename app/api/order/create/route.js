@@ -6,19 +6,19 @@ import User from "@/models/User";
 
 
 
+
 export async function POST(request){
     try {
         const { userId } = getAuth(request)
         const { address, items } = await request.json();
-
-        if(!address || items.length === 0) {
-            return NextResponse.json({ success: false, message: "Invalid Data" });
-        }
-
+        console.log("Request payload:", { address, items });
         const amount = await items.reduce(async (acc, item) => {
             const product = await Product.findById(item.product);
-            return acc + product.offerPrice * item.quantity;
-        },0)
+            if (!product) {
+                throw new Error(`Product with ID ${item.product} not found`);
+            }
+            return await acc + product.offerPrice * item.quantity;
+        },Promise.resolve(0));
 
         await inngest.send({
             name: 'order/created',
@@ -38,6 +38,7 @@ export async function POST(request){
         return NextResponse.json({ success: true, message: "Order Placed" });
 
     } catch (error) {
+        console.log(error)
         return NextResponse.json({ success: false, message: error.message });
     }   
 }

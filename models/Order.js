@@ -1,3 +1,4 @@
+import { product } from "@/assets/productData";
 import mongoose from "mongoose";
 
 const orderSchema = new mongoose.Schema({
